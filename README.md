@@ -1,25 +1,18 @@
 
-![AltSchool Africa Logo](./AltSchool-light.svg#gh-light-mode-only)
-![AltSchool Africa Logo](./AltSchool-dark.svg#gh-dark-mode-only)
 
-# Open Source Playground
-<a href="https://github.com/Oluwasetemi/altschool-opensource-names/stargazers"><img src="https://img.shields.io/github/stars/Oluwasetemi/altschool-opensource-names" alt="Stars Badge"/></a>
-<a href="https://github.com/Oluwasetemi/altschool-opensource-names/network/members"><img src="https://img.shields.io/github/forks/Oluwasetemi/altschool-opensource-names" alt="Forks Badge"/></a>
-<a href="https://github.com/Oluwasetemi/altschool-opensource-names/pulls"><img src="https://img.shields.io/github/issues-pr/Oluwasetemi/altschool-opensource-names" alt="Pull Requests Badge"/></a>
-<a href="https://github.com/Oluwasetemi/altschool-opensource-names/issues"><img src="https://img.shields.io/github/issues/Oluwasetemi/altschool-opensource-names" alt="Issues Badge"/></a>
-<a href="https://github.com/Oluwasetemi/altschool-opensource-names/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/Oluwasetemi/altschool-opensource-names?color=2b9348"></a>
 
-This project aims to introduce AltSchool Africa students to Open Source contribution. To get started, follow the steps below.
+# Eventloop Api
+
+This project aims to ease the booking of event centre. To contribute, follow the steps below.
 
 ## Fork this repository
 
 This will create a local copy of the repository in your GitHub account
-
-![Screenshot of GitHub repository with the link to fork highlighted](https://i.ibb.co/X7wFbBx/fork.png)
+![image](https://user-images.githubusercontent.com/95700260/192919803-ccdc8fa2-6549-40f7-9b3f-cf57a43ac019.png)
 
 ## Clone the repository
 
-<img align="right" width="350px" src="https://i.ibb.co/5Bd213P/code-copy.png" alt="clone this repository" />
+![image](https://user-images.githubusercontent.com/95700260/192920005-0db4bf7a-0dbd-45bd-b9cd-ada99d6169e7.png)
 
 Now clone the forked repository to your machine. Go to your GitHub account, open the forked repository, click on the code button and then click the _copy to clipboard_ icon.
 
@@ -34,64 +27,38 @@ where `<url-you-copied>` is the url to this repository (your fork of this projec
 For example:
 
 ```sh
-git clone https://github.com/tobisupreme/altschool-opensource-names.git
+git clone https://github.com/olakayCoder1/eventloop.git
 ```
-
-Your GitHub username will be in place of `tobisupreme`. Here you're copying the contents of the **altschool-opensource-names** repository on GitHub to your computer.
 
 ## Make a branch
 
 Change into the repository directory on your computer (if you are not already there):
 
 ```sh
-cd altschool-opensource-names
+cd eventloop
 ```
 
 Keep a reference to the original project by entering the following command:
 
 ```sh
-git remote add upstream https://github.com/Oluwasetemi/altschool-opensource-names.git
+git remote add upstream https://github.com/olakayCoder1/eventloop.git
 ```
 
-Create a new branch that describes the changes that you're going to make. For example, to create a branch named "adding-new-name", enter the following command:
+Create a new branch that describes the changes that you're going to make. For example, to create a branch named "authentication-implementation", enter the following command:
 
 ```sh
-git branch adding-new-name
+git branch authentication-implementation
 ```
 
 Switch to the branch by entering `git checkout <name-of-branch>`. For our example, the command will be:
 
 ```sh
-git checkout adding-new-name
+git checkout authentication-implementation
 ```
 
 ## Make changes and commit the changes
 
-Now open `names.txt` file and add your name to it. 
 
-:warning: Don't add it at the beginning or end of the file. 
-
-Put it anywhere in between (:pencil2: this will make the merge simple for git to understand). 
-
-Now, save the file.
-
-While in the project directory, if you execute the command `git status`, you'll see there are changes.
-
-<img align="right" width="600px" src="https://i.ibb.co/K5Qn0Ly/gst.png" alt="git status in a terminal" />
-
-Add those changes to the branch you just created using the `git add` command:
-
-```sh
-git add names.txt
-```
-
-Next, commit those changes using the `git commit` command:
-
-```sh
-git commit -m "Add <your-name> to the list of names"
-```
-
-replacing `<your-name>` with your name.
 
 ## Push changes to GitHub
 
@@ -105,21 +72,18 @@ replacing `<add-your-branch-name>` with the name of the branch you created earli
 As per our example, the command will be:
 
 ```sh
-git push origin -u adding-new-name
+git push origin -u authentication-implementation
 ```
 
 ## Submit your changes for review
 
 Open your forked repository on GitHub. Click on the `Compare & pull request` button.
 
-![Screenshot of GitHub repository with the link to compare and pull request highlighted](https://i.ibb.co/jR2gFHm/pr.png)
 
 Create a pull request
 
-![Screenshot of GitHub repository with the link to create pull request highlighted](https://i.ibb.co/jLPVkF1/submitpr.png)
 
-And that's it! Your Pull Request has been submitted! :partying_face:
-Soon a moderator will be merging all your changes into the main branch of this project. You will get a notification email once the changes have been merged.
+And that's it! Your Pull Request has been submitted! You will get a notification email once the changes have been merged.
 
 
 <details>
