@@ -1,6 +1,3 @@
-
-
-
 # Eventloop Api
 
 This project aims to ease the booking of event centre. To contribute, follow the steps below.
