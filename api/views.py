@@ -3,14 +3,15 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str , force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode , urlsafe_base64_encode
 from .serializers import (  
-    RegisterSerializer , 
-    ResetPasswordRequestEmailSerializer,
-    SetNewPasswordSerializer,
-    ChangePasswordSerializer
+    EventCentreSerializer,RegisterSerializer , 
+    ResetPasswordRequestEmailSerializer,SetNewPasswordSerializer,
+    ChangePasswordSerializer , EventCentreCategorySerializer ,
+    BookingSerializer,
     
     )
 from centre.models import (
-    EventCentre
+    EventCentre , EventCentreCategory ,
+    Booking
 )
 from account.models import CustomUser 
 from rest_framework import generics  
@@ -119,3 +120,20 @@ class ProductSearchAPIView(generics.ListAPIView):
         result = qs.search(q)
 
         return result
+
+
+
+class EventCentreCategoriesApiView(generics.ListCreateAPIView):
+    queryset = EventCentreCategory.objects.all()
+    serializer_class = EventCentreCategorySerializer 
+
+
+class EventCentreApiView(generics.ListCreateAPIView):
+    queryset = EventCentre.objects.all()
+    serializer_class = EventCentreSerializer
+
+
+class EventCentreBookingApiView(generics.ListCreateAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+ 

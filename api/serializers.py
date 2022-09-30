@@ -1,22 +1,17 @@
 from rest_framework import serializers
-from account.models import CustomUser 
+from account.models import CustomUser
+from centre.models import Booking, EventCentre, EventCentreCategory, EventCentreImage 
 from .models import *
 from rest_framework import status
 from account.models import TokenActivation , CustomUser
-from multiprocessing import AuthenticationError
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_str , force_str , smart_bytes , DjangoUnicodeDecodeError
-from django.utils.http import urlsafe_base64_decode , urlsafe_base64_encode
 
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name','last_name', 'address', 'phone_number' , 'profile_image' ]
+        fields = ['first_name','last_name', 'address', 'image' ]
     
- 
-
 
 class RegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input-type': 'password'} , write_only= True)
@@ -48,8 +43,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
-
-
 
 
 
@@ -87,3 +80,43 @@ class ChangePasswordSerializer(serializers.Serializer):
         
         
 
+# CENTRE SERIALIZERS STARTS 
+# CENTRE SERIALIZERS STARTS 
+
+class EventCentreCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventCentreCategory
+        fields = ['id', 'name', 'slug']
+
+
+
+class EventCentreImageInlineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventCentreImage
+        fields = '__all__'
+
+
+class EventCentreSerializer(serializers.ModelSerializer):
+    category = EventCentreCategorySerializer(read_only=True , many=True)
+    images = EventCentreImageInlineSerializer(many=True , read_only=True) 
+    class Meta:
+        model = EventCentre
+        fields = ['id','slug','name','location','description','category','is_active', 'stars' , 'created_at', 'images']
+
+
+
+class EventCentreImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventCentreImage
+        fields = '__all__'
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer(read_only=True)
+    event_centre = EventCentreSerializer(read_only=True , many=True)
+    class Meta:
+        model = Booking
+        fields = ['id','event_date','expired_date','event_centre','access_ref', 'user' , 'paid'] 
+
+
+    

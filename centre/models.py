@@ -53,6 +53,11 @@ class EventCentre(models.Model):
         return self.name
 
 
+    @property
+    def images(self):
+        return EventCentreImage.objects.filter(event_centre__id=self.id)
+
+
 def upload_to(instance, filename):
     return 'events/{filename}'.format(filename=filename)
 
@@ -63,9 +68,11 @@ class EventCentreImage(models.Model):
 
 
 class Booking(models.Model):
-    event_date = models.DateTimeField()
+    access_ref = models.CharField(max_length=100, null=True, blank=True)
+    event_date = models.DateField()
+    expired_date = models.DateField()
     event_centre = models.ManyToManyField(EventCentre , related_name='event_centre')
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL , null=True)
-    is_approved = models.BooleanField(default=False)
+    paid = models.BooleanField(default=False)
 
 
