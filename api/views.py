@@ -1,12 +1,16 @@
+import environ
+import requests
 from django.shortcuts import render
+from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str , force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode , urlsafe_base64_encode
+import requests
 from .serializers import (  
     EventCentreSerializer,RegisterSerializer , 
     ResetPasswordRequestEmailSerializer,SetNewPasswordSerializer,
     ChangePasswordSerializer , EventCentreCategorySerializer ,
-    BookingSerializer,
+    BookingSerializer,UserLoginSerializer,PaymentTransactionSerializer
     
     )
 from centre.models import (
@@ -14,13 +18,15 @@ from centre.models import (
     Booking
 )
 from account.models import CustomUser 
+from payment.models import PaymentTransaction
 from rest_framework import generics  
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated 
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 from .functions import send_reset_mail
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 # from rest_framework_simplejwt.views import TokenObtainPairView
@@ -33,6 +39,30 @@ from .functions import send_reset_mail
 class UserRegistrationApiView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
+
+
+# This view handle user login
+class UserLogin(generics.GenericAPIView):
+    serializer_class = UserLoginSerializer
+    def post(self,request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = request.data.get('email')
+            password = request.data.get('password') 
+            user = CustomUser.objects.get(email=email)
+            if user.check_password(password) :
+                if user :
+                    token , created = Token.objects.get_or_create(user=user)
+                    return Response(
+                        { 
+                            'token' : token.key,
+                            'email' : user.email,
+                            'first_name' : user.first_name
+                        }, 
+                        status=status.HTTP_200_OK
+                    )
+        return Response({ 'error':'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 # This view handle password reset link email sending on click on forget password
 class ResetPasswordRequestEmailApiView(generics.GenericAPIView):
@@ -132,8 +162,52 @@ class EventCentreApiView(generics.ListCreateAPIView):
     queryset = EventCentre.objects.all()
     serializer_class = EventCentreSerializer
 
+class EventCentreCreateApiView(APIView):
+    def post(self , request):
+        data = request.data
+        images = data.pop('images')
+        serializer = EventCentreSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            new_centre = serializer.save()
+        return Response(serializer.data , status=status.HTTP_200_OK)
+
 
 class EventCentreBookingApiView(generics.ListCreateAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+
+
+class PaymentTransactionApiView(APIView):
+    def post(self,request):
+        serializer = PaymentTransactionSerializer(
+            data = request.data, context={'request':request}
+        )
+        serializer.is_valid(raise_exception=True)
+        res = serializer.save()
+        return Response(res)
+  
+
+
+class PaymentTransactionApiView(APIView):
+    def get(self,request , reference):
+        env = environ.Env()
+        environ.Env.read_env()
+        payment = PaymentTransaction.objects.get( payment_reference=reference , book__user__id=request.user.id )
+        reference = payment.payment_reference
+        url = 'https://api.paystack.co/transaction/verify/{}'.format(reference)
+        paystack_key = env('settings.PAYSTACK_SECRET_KEY')
+        headers = {
+            {'authorization': f'Bearer { paystack_key }' }
+        }
+        r = requests.get(url , headers=headers)
+        response = r.json()
+        if response['data']['status'] == 'success':
+            amount = response['data']['amount'] 
+            payment.status = 'success'
+            payment.amount = amount
+
+            payment.save()
+
+            return Response(response)
+        return Response(response)
  

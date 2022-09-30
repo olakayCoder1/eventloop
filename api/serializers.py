@@ -1,17 +1,26 @@
+import requests
+import environ
 from rest_framework import serializers
 from account.models import CustomUser
 from centre.models import Booking, EventCentre, EventCentreCategory, EventCentreImage 
 from .models import *
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from account.models import TokenActivation , CustomUser
-
+from payment.models import PaymentTransaction
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['first_name','last_name', 'address', 'image' ]
-    
+
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(style={'input-type': 'password'} , write_only= True)
+    class Meta:
+        fields =  ['email', 'password'] 
 
 class RegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input-type': 'password'} , write_only= True)
@@ -24,12 +33,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         }
  
 
-    def save(self):
-        first_name = self.validated_data['first_name']
-        last_name = self.validated_data['last_name']
-        email = self.validated_data['email']
-        password = self.validated_data['password']
-        password2 = self.validated_data['password2']
+    def create(self , validated_data):
+        first_name = validated_data['first_name']
+        last_name = validated_data['last_name']
+        email = validated_data['email']
+        password = validated_data['password']
+        password2 = validated_data['password2']
         user = CustomUser( first_name=first_name, last_name=last_name,  email=email)
 
         if CustomUser.objects.filter(email=email).exists():
@@ -42,6 +51,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         user.set_password(password)
         user.save()
+        
         return user
 
 
@@ -50,6 +60,7 @@ class ResetPasswordRequestEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
     class Meta:
         fields =  ['email']
+
 
 
 class SetNewPasswordSerializer(serializers.Serializer):
@@ -98,7 +109,7 @@ class EventCentreImageInlineSerializer(serializers.ModelSerializer):
 
 class EventCentreSerializer(serializers.ModelSerializer):
     category = EventCentreCategorySerializer(read_only=True , many=True)
-    images = EventCentreImageInlineSerializer(many=True , read_only=True) 
+    images = EventCentreImageInlineSerializer(read_only=True , many=True) 
     class Meta:
         model = EventCentre
         fields = ['id','slug','name','location','description','category','is_active', 'stars' , 'created_at', 'images']
@@ -117,6 +128,37 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = ['id','event_date','expired_date','event_centre','access_ref', 'user' , 'paid'] 
+
+
+class PaymentTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentTransaction
+        fields = ['id','book','amount', 'payment_reference', 'status' ,'created_at']
+
+    def save(self):
+        env = environ.Env()
+        environ.Env.read_env()
+        url = 'https://api.paystack.co/tarnsaction/initialize'
+        paystack_key = env('settings.PAYSTACK_SECRET_KEY')
+        header = {
+            { 'authorization': f'Bearer  { paystack_key } ' } 
+
+        }
+        data = {
+            'amount':self.validated_data['amount'],
+            'email': self.context['request'].user.email
+        }
+        r = requests.post(url, headers=header , data=data)
+        response = r.json()
+
+        PaymentTransaction.objects.create(
+            status = 'pending',
+            book = self.validated_data['book'],
+            amount = data['amount'],
+            payment_reference = response['data']['reference']
+        )
+        return response
+
 
 
     

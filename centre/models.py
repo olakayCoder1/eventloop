@@ -63,7 +63,7 @@ def upload_to(instance, filename):
 
 class EventCentreImage(models.Model):
     image = models.ImageField(upload_to=upload_to)
-    event_centre = models.ForeignKey(EventCentre, on_delete=models.CASCADE)
+    event_centre = models.ForeignKey(EventCentre, on_delete=models.CASCADE, related_name='centre_image')
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -71,8 +71,11 @@ class Booking(models.Model):
     access_ref = models.CharField(max_length=100, null=True, blank=True)
     event_date = models.DateField()
     expired_date = models.DateField()
-    event_centre = models.ManyToManyField(EventCentre , related_name='event_centre')
+    event_centre = models.ForeignKey(EventCentre ,on_delete=models.SET_NULL, null=True , related_name='event_centre')
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL , null=True)
     paid = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f'{self.user} , {self.event_centre.name} , {self.event_date}'
 
 

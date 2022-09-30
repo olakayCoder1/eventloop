@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 import environ
-import os
 from datetime import timedelta
 
 env = environ.Env()
@@ -46,7 +45,9 @@ INSTALLED_APPS = [
     'account',
     'api',
     'centre',
-    'rest_framework'
+    'payment',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -144,9 +145,14 @@ AUTH_USER_MODEL = 'account.CustomUser'
 
 
 
-# REST_FRAMEWORK = {
+REST_FRAMEWORK = {
 
-#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-#     'PAGE_SIZE': 100
+       'DEFAULT_AUTHENTICATION_CLASSES ': (
+        'res_framework.authentication.SessionAuthentication',
+        'res_framework.authentication.TokenAuthentication',
+       ),
+    #    'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.AllowAny'
+    #    ),
 
-# }
+}
