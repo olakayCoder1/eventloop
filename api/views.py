@@ -138,9 +138,9 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 
 
-class ProductSearchAPIView(generics.ListAPIView):  
+class EventCentreSearchAPIView(generics.ListAPIView):  
     queryset = EventCentre.objects.all()
-    serializer_class = SetNewPasswordSerializer
+    serializer_class = EventCentreSerializer
 
     def get_queryset(self, *args , **kwargs):
         qs = super().get_queryset( *args , **kwargs)

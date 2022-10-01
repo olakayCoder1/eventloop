@@ -7,7 +7,7 @@ urlpatterns = [
     path('password/forget', views.ResetPasswordRequestEmailApiView.as_view(), name='password_reset_request_email'),
     path('password/reset/<str:token>/<str:uuidb64>/', views.SetNewPasswordTokenCheckApi.as_view(), name='password_reset_done'),
     path('password/reset', views.ChangePasswordView.as_view(), name='password_change'),
-    path('search', views.ChangePasswordView.as_view(), name='password_change'),
+    path('search', views.EventCentreSearchAPIView.as_view(), name='search'),
 
 
     path('events/categories/', views.EventCentreCategoriesApiView.as_view(), name='event_centre_categories'),
