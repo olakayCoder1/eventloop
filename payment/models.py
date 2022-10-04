@@ -11,7 +11,7 @@ class PaymentTransaction(models.Model):
         ('success','success'),
         ('failed','failed'),
     )
-    # user = models.ForeignKey(CustomUser , on_delete=models.SET_NULL , null=True)
+    user = models.ForeignKey(CustomUser , on_delete=models.SET_NULL , null=True)
     book = models.ForeignKey(Booking , on_delete=models.SET_NULL , null=True)
     amount = models.DecimalField(max_digits=100, null=True , decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)

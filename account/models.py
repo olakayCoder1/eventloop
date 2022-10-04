@@ -65,6 +65,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class TokenActivation(models.Model):
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     token = models.CharField(max_length=150)
-    time = models.DateTimeField()
+    time = models.DateTimeField(auto_now_add=True)
     email = models.EmailField()
 
