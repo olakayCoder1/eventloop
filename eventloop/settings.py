@@ -151,8 +151,4 @@ REST_FRAMEWORK = {
         'res_framework.authentication.SessionAuthentication',
         'res_framework.authentication.TokenAuthentication',
        ),
-    #    'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.AllowAny'
-    #    ),
-
 }

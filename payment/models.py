@@ -11,6 +11,7 @@ class PaymentTransaction(models.Model):
         ('success','success'),
         ('failed','failed'),
     )
+    public_id = models.CharField(max_length=10 , null=True , blank=True)
     user = models.ForeignKey(CustomUser , on_delete=models.SET_NULL , null=True)
     book = models.ForeignKey(Booking , on_delete=models.SET_NULL , null=True)
     amount = models.DecimalField(max_digits=100, null=True , decimal_places=2)

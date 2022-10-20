@@ -4,7 +4,7 @@ from .models import (
     EventCentre , EventCentreCategory ,
     Hall 
 )
-from account.signals import  random_string_generator
+from account.utils import  random_string_generator , unique_public_id_generator
 from django.utils.text import slugify
 
 
@@ -18,6 +18,7 @@ def event_centre_category_signal(sender, instance , created , **kwarg):
         else:
             new_slug = slug
         instance.slug = new_slug
+        instance.public_id = unique_public_id_generator(instance)
         instance.save()
 
 
@@ -31,6 +32,7 @@ def event_centre_signal(sender, instance , created , **kwarg):
         else:
             new_slug = slug
         instance.slug = new_slug
+        instance.public_id = unique_public_id_generator(instance)
         instance.save()
 
 
@@ -45,4 +47,5 @@ def hall_signal(sender, instance , created , **kwarg):
         else:
             new_slug = slug
         instance.slug = new_slug
+        instance.public_id = unique_public_id_generator(instance)
         instance.save()

@@ -8,6 +8,7 @@ from account.models import CustomUser
 
 
 class EventCentreCategory(models.Model):
+    public_id = models.CharField(max_length=10 , null=True , blank=True)
     name = models.CharField(max_length=100)
     slug = models.CharField(max_length=100, null=True , blank=True )
     created_at = models.DateTimeField(auto_now_add=True)       
@@ -32,10 +33,8 @@ class EventCentreManager(models.Manager):
         return self.get_queryset().search(query)
 
 
-
-
-
 class EventCentre(models.Model):
+    public_id = models.CharField(max_length=10 , null=True , blank=True)
     name = models.CharField(max_length=100)
     slug = models.CharField(max_length=100, null=True , blank=True )
     location = models.CharField(max_length=100)
@@ -59,8 +58,8 @@ class EventCentre(models.Model):
 
 
     @property
-    def hall(self):
-        return Hall.objects.filter(event_center__id=self.id)
+    def halls(self):
+        return Hall.objects.filter(event_centre__id=self.id)
 
 
 def upload_to(instance, filename):
@@ -75,11 +74,16 @@ class EventCentreImage(models.Model):
     def __str__(self) -> str:
         return self.event_centre.name
 
+
+    
+
+
 class Hall(models.Model):
     AVAILABILITY_STATUS = (
         ('open', 'open'),
         ('close','close'),
     )
+    public_id = models.CharField(max_length=10 , null=True , blank=True)
     name = models.CharField(max_length=100)
     slug = models.CharField(max_length=100, null=True , blank=True )
     price = models.PositiveIntegerField()
@@ -89,13 +93,14 @@ class Hall(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     event_centre = models.ForeignKey(EventCentre, on_delete=models.CASCADE)
 
+    @property
+    def images(self):
+        return HallImage.objects.filter(hall__id=self.id)
 
     def __str__(self) -> str:
         return self.name
 
-    # @property
-    # def image(self):
-    #     return HallImage.objects.filter(hall__id=self.id)
+    
 
 class HallPaymentCategory(models.Model):
     CATEGORY_TYPE = (
@@ -103,6 +108,7 @@ class HallPaymentCategory(models.Model):
         ('weekend','weekend'),
         ('festive_period','festive_period'),
     )
+    public_id = models.CharField(max_length=10 , null=True , blank=True)
     type = models.CharField(max_length=20 , choices=CATEGORY_TYPE)
     price = models.PositiveIntegerField()
     hall = models.ForeignKey(Hall, on_delete=models.CASCADE)
@@ -128,11 +134,12 @@ class HallImage(models.Model):
 
 
 class Booking(models.Model):
+    public_id = models.CharField(max_length=10 , null=True , blank=True)
     access_ref = models.CharField(max_length=100, null=True, blank=True)
     event_date = models.DateField()
     expired_date = models.DateField(null=True, blank=True)
     hall = models.ForeignKey(Hall ,on_delete=models.SET_NULL, null=True , related_name='hall_booked')
-    payment_status = models.BooleanField(default=True)
+    payment_status = models.BooleanField(default=False) 
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL , null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

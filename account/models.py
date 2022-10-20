@@ -39,6 +39,7 @@ def upload_to(instance, filename):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    public_id = models.CharField(max_length=10 , null=True , blank=True)
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(max_length=100, null=True , blank=True )
     last_name = models.CharField(max_length=100, null=True , blank=True )
